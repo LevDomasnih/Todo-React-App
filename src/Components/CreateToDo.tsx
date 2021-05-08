@@ -19,18 +19,17 @@ type mapDispatchToPropsType = {
 
 type ownPropsType = {
     nullUpdateId: () => void
-    updateId: null | number | string
+    updateId: null | number
 }
 
 type PropsType = mapDispatchToPropsType & mapStateToPropsType & ownPropsType
 
-type StateType = {
-}
+type StateType = {}
 
 class CreateToDo extends React.Component<PropsType, StateType> {
     formRef = React.createRef<any>();
 
-    componentDidUpdate(prevProps: mapStateToPropsType , prevState: StateType) {
+    componentDidUpdate(prevProps: mapStateToPropsType, prevState: StateType) {
         if (this.props.updateId === null) return
 
         const data = this.props.todo.filter((e) => e.id === this.props.updateId)
@@ -52,8 +51,7 @@ class CreateToDo extends React.Component<PropsType, StateType> {
                     this.onClose()
                     this.props.addTODO(values)
                 })
-        }
-        else {
+        } else {
             const id = this.props.updateId
             console.log('onSubmitEdit', this.formRef.current.getFieldsValue())
             this.formRef.current.validateFields()
@@ -71,7 +69,7 @@ class CreateToDo extends React.Component<PropsType, StateType> {
                 ref={this.formRef}
                 name="create"
                 layout={'vertical'}
-                labelCol={{ span: 24 }}
+                labelCol={{span: 24}}
             >
                 <Drawer
                     title={(this.props.updateId && "Update TODO") || "Create TODO"}
@@ -102,12 +100,11 @@ class CreateToDo extends React.Component<PropsType, StateType> {
 }
 
 
-
 const ToDoForm = () => {
     return (
         <Row gutter={[16, 16]}>
 
-            <Form.Item name="date_create" />
+            <Form.Item name="date_create"/>
 
             <Form.Item name="done" initialValue={0}/>
 

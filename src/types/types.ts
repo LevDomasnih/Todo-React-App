@@ -1,8 +1,8 @@
 export type todoType = {
     author: string
     date_create: string
-    done: boolean | string
-    id: string | number
+    done: boolean
+    id: number
     profession: string
     task: string
 }

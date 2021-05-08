@@ -74,10 +74,6 @@ export const updateTODO = (book: todoType): ThunkType => (dispatch) => {
         })
 }
 
-export const getTestData = (): ThunkType => (dispatch) => {
-    todoAPI.getTestData()
-}
-
 export const deleteTODO = (id: number): ThunkType => (dispatch) => {
     todoAPI.deleteTODO(id)
         .then(() => {
