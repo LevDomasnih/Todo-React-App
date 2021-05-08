@@ -2,11 +2,35 @@ import React from "react";
 import {Button, Col, Drawer, Form, Input, Row} from "antd";
 import {connect} from "react-redux";
 import {addTODO, changeVisible, getTODO, updateTODO} from "../redux/todoReducer";
+import {todoType} from "../types/types";
+import {AppStateType} from "../redux/reduxStore";
 
-class CreateToDo extends React.Component {
-    formRef = React.createRef();
+type mapStateToPropsType = {
+    todo: Array<todoType>
+    visible: boolean
+}
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+type mapDispatchToPropsType = {
+    changeVisible: (data: boolean) => void
+    addTODO: (todo: todoType) => void
+    getTODO: () => void
+    updateTODO: (book: todoType) => void
+}
+
+type ownPropsType = {
+    nullUpdateId: () => void
+    updateId: null | number | string
+}
+
+type PropsType = mapDispatchToPropsType & mapStateToPropsType & ownPropsType
+
+type StateType = {
+}
+
+class CreateToDo extends React.Component<PropsType, StateType> {
+    formRef = React.createRef<any>();
+
+    componentDidUpdate(prevProps: mapStateToPropsType , prevState: StateType) {
         if (this.props.updateId === null) return
 
         const data = this.props.todo.filter((e) => e.id === this.props.updateId)
@@ -24,7 +48,7 @@ class CreateToDo extends React.Component {
             this.formRef.current.setFieldsValue({date_create: new Date().toJSON().slice(0, 10)})
             console.log('onSubmit', this.formRef.current.getFieldsValue())
             this.formRef.current.validateFields()
-                .then(values => {
+                .then((values: todoType) => {
                     this.onClose()
                     this.props.addTODO(values)
                 })
@@ -33,7 +57,7 @@ class CreateToDo extends React.Component {
             const id = this.props.updateId
             console.log('onSubmitEdit', this.formRef.current.getFieldsValue())
             this.formRef.current.validateFields()
-                .then(values => {
+                .then((values: todoType) => {
                     this.onClose()
                     this.props.updateTODO({...values, id})
                 })
@@ -135,7 +159,7 @@ const ToDoForm = () => {
     );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: AppStateType): mapStateToPropsType => {
     return {
         visible: state.todoStore.drawerVisible,
         todo: state.todoStore.todo

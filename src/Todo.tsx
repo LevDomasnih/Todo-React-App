@@ -3,10 +3,36 @@ import {Button, Layout, Popconfirm, Space, Table} from "antd";
 import {Content} from "antd/lib/layout/layout";
 import {connect} from "react-redux";
 import CreateToDo from "./Components/CreateToDo";
-import {changeVisible, deleteTODO, getTODO, setTODOData, updateTODO} from "./redux/todoReducer";
+import {changeVisible, deleteTODO, getTestData, getTODO, setTODOData, updateTODO} from "./redux/todoReducer";
+import {todoType} from "./types/types";
+import {AppStateType} from "./redux/reduxStore";
+import {ColumnsType} from "antd/es/table";
 
-class Todo extends React.Component {
-    constructor(props) {
+type mapStateToPropsType = {
+    todo: Array<todoType>
+}
+
+type mapDispatchToPropsType = {
+    changeVisible: (visible: boolean) => void
+    setTODOData : (data: Array<todoType>) => void
+    deleteTODO: (id: number) => void
+    updateTODO: (book: todoType) => void
+    getTODO: () => void
+    getTestData: () => void
+}
+
+type ownPropsType = {
+
+}
+
+type PropsType = mapDispatchToPropsType & mapStateToPropsType & ownPropsType
+
+type StateType = {
+    updateId: null | number | string
+}
+
+class Todo extends React.Component<PropsType, StateType> {
+    constructor(props: PropsType) {
         super(props);
 
         this.state = {
@@ -14,7 +40,7 @@ class Todo extends React.Component {
         }
     }
 
-    showDrawer = (id = null) => {
+    showDrawer = (id: number | string | null = null) => {
         this.props.changeVisible(true)
 
         this.setState({
@@ -30,32 +56,36 @@ class Todo extends React.Component {
 
     componentDidMount() {
         this.props.getTODO()
+        this.props.getTestData()
     }
 
 
     render() {
         const data = this.props.todo;
         const {showDrawer} = this
-
-        const handleDelete = (id) => {
+// @ts-ignore
+        const handleDelete = (id: number) => {
             this.props.deleteTODO(id)
         }
 
-        const handleChange = (id) => {
+        const handleChange = (id: string | number) => {
             const data = this.props.todo;
 
             let item = data.filter((item) => item.id === id)
 
+            // @ts-ignore
             this.props.updateTODO({...item[0], done: item[0].done == 0 ? '1' : '0'})
         };
 
 
-        const columns = [
+        const columns: ColumnsType<any> = [
             {
                 title: 'Name',
                 key: 'author',
+                // @ts-ignore
                 editable: true,
-                render(text, record) {
+                render(text: todoType, record: todoType) {
+                    // @ts-ignore
                     let style = record.done == 0 ? {'background': '#fff'} : {'background': '#ddd'}
                     return {
                         props: {
@@ -68,7 +98,8 @@ class Todo extends React.Component {
             {
                 title: 'Date create',
                 key: 'date_create',
-                render(text, record) {
+                render(text: todoType, record: todoType) {
+                    // @ts-ignore
                     let style = record.done == 0 ? {'background': '#fff'} : {'background': '#ddd'}
                     return {
                         props: {
@@ -81,7 +112,8 @@ class Todo extends React.Component {
             {
                 title: 'Profession',
                 key: 'profession',
-                render(text, record) {
+                render(text: todoType, record: todoType) {
+                    // @ts-ignore
                     let style = record.done == 0 ? {'background': '#fff'} : {'background': '#ddd'}
                     return {
                         props: {
@@ -94,7 +126,8 @@ class Todo extends React.Component {
             {
                 title: 'Task',
                 key: 'task',
-                render(text, record) {
+                render(text: todoType, record: todoType) {
+                    // @ts-ignore
                     let style = record.done == 0 ? {'background': '#fff'} : {'background': '#ddd'}
                     return {
                         props: {
@@ -110,7 +143,8 @@ class Todo extends React.Component {
                 key: 'action',
                 fixed: 'right',
                 width: 100,
-                render(text, record, key) {
+                render(text: todoType, record: todoType) {
+                    // @ts-ignore
                     let style = record.done == 0 ? {'background': '#fff'} : {'background': '#ddd'}
                     return {
                         props: {
@@ -118,6 +152,7 @@ class Todo extends React.Component {
                         },
                         children: (
                             <Space size="middle">
+                                {/*// @ts-ignore*/}
                                 {record.done == 0 ?
                                     <Button type="primary" style={{backgroundColor: 'green', borderColor: 'green'}}
                                             danger onClick={() => handleChange(record.id)}>Done</Button> :
@@ -130,6 +165,7 @@ class Todo extends React.Component {
                                 >
                                     Update
                                 </Button>
+                                {/*// @ts-ignore*/}
                                 <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
                                     <Button type="primary" block danger>Delete</Button>
                                 </Popconfirm>
@@ -149,10 +185,10 @@ class Todo extends React.Component {
                     <Content style={{margin: "16px", minHeight: 940}}>
                         <Button style={{marginBottom: 16}} onClick={() => this.showDrawer()} type="primary">Create TODO</Button>
                         <Table columns={columns}
-                               dataSource={data.sort((a, b) => b.id - a.id)}
+                               dataSource={data.sort((a , b) => Number(b.id) - Number(a.id))}
                                pagination={{
                                    position: ['bottomLeft'],
-                                   pageSize: 14
+                                   pageSize: 11
                                }}
                         />
                     </Content>
@@ -163,16 +199,18 @@ class Todo extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: AppStateType): mapStateToPropsType => {
     return {
         todo: state.todoStore.todo,
     }
 }
 
-export default connect(mapStateToProps, {
+
+export default connect<mapStateToPropsType, mapDispatchToPropsType, ownPropsType, AppStateType>(mapStateToProps, {
     changeVisible,
     setTODOData,
     deleteTODO,
     updateTODO,
     getTODO,
+    getTestData
 })(Todo);

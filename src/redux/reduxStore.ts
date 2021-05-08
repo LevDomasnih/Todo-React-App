@@ -4,12 +4,16 @@ import { createStore, combineReducers } from "redux";
 import todoReducer from "./todoReducer";
 
 
-let reducers = combineReducers({
+let rootReducer = combineReducers({
     todoStore: todoReducer,
 })
 
-let store = createStore(reducers, applyMiddleware(thunkMiddleware));
+let store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
 
+type RootReducerType = typeof rootReducer;
+export type AppStateType = ReturnType<RootReducerType>
+
+// @ts-ignore
 window.store = store;
 
 export default store;
